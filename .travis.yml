@@ -9,7 +9,7 @@ install:
   - cmake .
   - make
   - sudo make install
-  - sudo find /usr -name '*.pyc' -delete
+  - pip install pycparser
   - pip install pygit2
   - pip install requests
   - pip install bs4
