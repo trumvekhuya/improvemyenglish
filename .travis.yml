@@ -3,6 +3,12 @@ python:
   - "3.7-dev"  # 3.7 development branch
 # command to install dependencies
 install:
+  - wget https://github.com/libgit2/libgit2/archive/v0.27.0.tar.gz
+  - tar xzf v0.27.0.tar.gz
+  - cd libgit2-0.27.0/
+  - cmake .
+  - make
+  - sudo make install
   - pip install pygit2
   - pip install requests
   - pip install bs4
