@@ -9,9 +9,9 @@ install:
   - pip install pygithub
   - pip install tomd
   - pip install urllib3
-  - wget https://github.com/libgit2/libgit2/archive/v0.27.0.tar.gz
-  - tar xzf v0.27.0.tar.gz
-  - cd libgit2-0.27.0/
+  - wget https://github.com/libgit2/libgit2/archive/v0.27.7.tar.gz
+  - tar v0.27.7.tar.gz
+  - cd libgit2-0.27.7/
   - cmake .
   - make
   - sudo make install
