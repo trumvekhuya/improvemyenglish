@@ -3,7 +3,14 @@ python:
   - "3.7-dev"  # 3.7 development branch
 # command to install dependencies
 install:
-  - pip install -r requirements.txt
+  - pip install pygit2
+  - pip install requests
+  - pip install bs4
+  - pip install datetime
+  - pip install pygithub
+  - pip install tomd
+  - pip install urllib3
+
 # command to run tests
 script:
   - python3 trumvekhuya.py
