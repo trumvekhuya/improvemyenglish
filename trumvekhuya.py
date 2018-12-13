@@ -61,7 +61,7 @@ def get_book_id(cta):
 def get_audio_links(book_id, chapterids):
     chapter_no_2_audio_link = {}
     for chapterNo, chapterid in chapterids.items():
-        response = requests.get("{domain}/api/books/" + book_id + "/chapters/" + chapterid + "/audio")
+        response = requests.get(f'{domain}/api/books/{book_id}/chapters/{chapterid}/audio')
         chapter_no_2_audio_link[chapterNo] = json.loads(response.content).get('url')
     return chapter_no_2_audio_link
 
