@@ -15,6 +15,7 @@ install:
   - cmake .
   - make
   - sudo make install
+  - cd ..
   - pip install pygit2
 
 # command to run tests
