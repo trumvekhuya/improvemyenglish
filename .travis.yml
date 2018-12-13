@@ -17,6 +17,9 @@ install:
   - sudo make install
   - cd ..
   - pip install pygit2
+  - sudo ldconfig
+  - python -c 'import pygit2'
+
 
 # command to run tests
 script:
