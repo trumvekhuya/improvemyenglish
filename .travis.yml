@@ -5,6 +5,7 @@ python:
 install:
   - pip install requests
   - pip install bs4
+  - pip install html5lib
   - pip install datetime
   - pip install pygithub
   - pip install tomd
