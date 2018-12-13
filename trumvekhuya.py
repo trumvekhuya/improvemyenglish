@@ -1,4 +1,3 @@
-# coding: utf-8
 import json
 
 import pygit2
@@ -47,7 +46,7 @@ def get_article(cta):
 
 def get_chapter_ids(cta):
     chapter_no_2_chapter_id = {}
-    menu_list = get_element_from_request(f'https://www.blinkist.com{cta}', "div",
+    menu_list = get_element_from_request(f'{domain}{cta}', "div",
                                          "reader__container__chapters__menu__inside")
     for li in menu_list.find_all('li'):
         chapter_no_2_chapter_id[li.attrs.get('data-chapterno')] = li.attrs.get('data-chapterid')
@@ -55,14 +54,14 @@ def get_chapter_ids(cta):
 
 
 def get_book_id(cta):
-    reader_contrainer = get_element_from_request(f'https://www.blinkist.com{cta}', "div", "reader__container")
+    reader_contrainer = get_element_from_request(f'{domain}{cta}', "div", "reader__container")
     return reader_contrainer.attrs.get('data-book-id')
 
 
 def get_audio_links(book_id, chapterids):
     chapter_no_2_audio_link = {}
     for chapterNo, chapterid in chapterids.items():
-        response = requests.get("https://www.blinkist.com/api/books/" + book_id + "/chapters/" + chapterid + "/audio")
+        response = requests.get("{domain}/api/books/" + book_id + "/chapters/" + chapterid + "/audio")
         chapter_no_2_audio_link[chapterNo] = json.loads(response.content).get('url')
     return chapter_no_2_audio_link
 
