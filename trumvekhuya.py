@@ -90,8 +90,8 @@ def run():
     write_to_file(text_file_name, output_html, 'w')
     os.system(f'ebook-convert {text_file_name} {text_file_name.replace(".html", "")}.mobi')
     wisecreator.wisecreate.main(f'{text_file_name.replace(".html", "")}.mobi')
-    os.remove(text_file_name)
-    os.remove(f'{text_file_name.replace(".html", "")}.mobi')
+    # os.remove(text_file_name)
+    # os.remove(f'{text_file_name.replace(".html", "")}.mobi')
     write_audio_file(get_audio_links(get_book_id(cta), get_chapter_ids(cta)), directory, title)
     return commitMessage
 
