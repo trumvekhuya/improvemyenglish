@@ -213,8 +213,8 @@ def get_book_asin(path_to_book):
     print(path_to_mobitool)
     command = [path_to_mobitool, path_to_book]
     try:
-        proc = subprocess.Popen(command)
-        out, err = proc.communicate()
+        out, err = subprocess.call(command, stdout=subprocess.PIPE)
+        # out, err = proc.communicate()
     except Exception as e:
         command_str = " ".join(command)
         description = ["Failed to run command", command_str, e]
