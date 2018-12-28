@@ -3,6 +3,7 @@ python:
   - "3.6"
 # command to install dependencies
 install:
+  - sudo -v && wget -nv -O- https://download.calibre-ebook.com/linux-installer.sh | sudo sh /dev/stdin
   - pip install requests
   - pip install bs4
   - pip install html5lib
