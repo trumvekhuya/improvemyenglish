@@ -211,9 +211,9 @@ def get_path_to_mobitool():
 def get_book_asin(path_to_book):
     path_to_mobitool = get_path_to_mobitool()
     print(path_to_mobitool)
-    command = ['sudo', path_to_mobitool, path_to_book]
+    command = [path_to_mobitool, path_to_book]
     try:
-        proc = subprocess.Popen(['sudo', str(path_to_mobitool), str(path_to_book)])
+        proc = subprocess.Popen(command)
         out, err = proc.communicate()
     except Exception as e:
         command_str = " ".join(command)
