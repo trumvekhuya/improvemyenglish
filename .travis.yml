@@ -24,7 +24,6 @@ install:
   - pip install pygit2
   - sudo ldconfig
   - python -c 'import pygit2'
-  - chmod +x wisecreator/third_party/mobitool-linux-i386
 
 
 # command to run tests
