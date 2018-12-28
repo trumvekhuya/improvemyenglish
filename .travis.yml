@@ -10,6 +10,9 @@ install:
   - pip install pygithub
   - pip install tomd
   - pip install urllib3
+  - pip install pysqlite3
+  - pip install nltk
+  - pip install cursor
   - wget https://github.com/libgit2/libgit2/archive/v0.27.7.tar.gz
   - tar xzf v0.27.7.tar.gz
   - cd libgit2-0.27.7/
