@@ -26,7 +26,7 @@ install:
   - python -c 'import pygit2'
   - chmod +x wisecreator/third_party/mobitool-linux-i386
   - ls -la wisecreator/third_party/
-  - sudo apt install tree
+  - sudo apt-get install tree
 
 
 # command to run tests
