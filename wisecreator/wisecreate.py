@@ -213,8 +213,8 @@ def get_book_asin(path_to_book):
     print(path_to_mobitool)
     command = [path_to_mobitool, path_to_book]
     try:
-        subprocess.call(['pwd'], stdout=subprocess.PIPE)
-        subprocess.call(['pwd wisecreator/third_party/'], stdout=subprocess.PIPE)
+        subprocess.call(['pwd'])
+        # subprocess.call(['pwd wisecreator/third_party/'], stdout=subprocess.PIPE)
         subprocess.call(['ls -la wisecreator/third_party/'])
 
         proc= subprocess.Popen(command, stdout=subprocess.PIPE)
