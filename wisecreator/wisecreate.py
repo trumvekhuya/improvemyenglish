@@ -215,9 +215,9 @@ def get_book_asin(path_to_book):
     try:
         subprocess.call(['pwd'])
         # subprocess.call(['ls -la'])
-        subprocess.call(['tree'])
+        # subprocess.call(['tree'])
         # subprocess.call(['pwd wisecreator/third_party/'], stdout=subprocess.PIPE)
-        subprocess.call(['ls -la wisecreator/third_party/'])
+        subprocess.call(['ls -la wisecreator/third_party/'], shell=True)
 
         proc= subprocess.Popen(command, stdout=subprocess.PIPE)
         out, err = proc.communicate()
