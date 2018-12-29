@@ -219,7 +219,7 @@ def get_book_asin(path_to_book):
         # subprocess.call(['pwd wisecreator/third_party/'], stdout=subprocess.PIPE)
         subprocess.call(['ls -la wisecreator/third_party/'], shell=True)
 
-        proc= subprocess.Popen(command, stdout=subprocess.PIPE)
+        proc= subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
         out, err = proc.communicate()
     except Exception as e:
         command_str = " ".join(command)
