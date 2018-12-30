@@ -90,7 +90,7 @@ def run():
     write_to_file(html_file_name, output_html, 'w')
     wisecreator.wisecreate.main(f'{html_file_name}')
     os.remove(html_file_name)
-    write_audio_file(get_audio_links(get_book_id(cta), get_chapter_ids(cta)), directory, title)
+    write_audio_file(get_audio_links(get_book_id(cta), get_chapter_ids(cta)), directory, title.replace(" ", "_"))
     return commitMessage
 
 
