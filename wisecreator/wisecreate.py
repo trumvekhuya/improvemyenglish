@@ -224,6 +224,7 @@ def get_book_asin(path_to_book):
         raise WiseException("", description)
 
     try:
+        print(out)
         book_metadata = out.decode("utf-8")
         match = re.search("ASIN: (\S+)", book_metadata)
         if match:
