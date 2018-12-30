@@ -230,6 +230,7 @@ def get_book_asin(path_to_book):
             book_asin = match.group(1)
             return book_asin
         else:
+            print('return None when get book asin???')
             return None
     except Exception as e:
         message = ["Failed to decode mobitool output"]
@@ -238,9 +239,9 @@ def get_book_asin(path_to_book):
 def get_rawml_content(path_to_book):
     path_to_mobitool = get_path_to_mobitool()
 
-    command = [path_to_mobitool, '-d', path_to_book]
+    command = f'{path_to_mobitool} -d {path_to_book}'
     try:
-        proc = subprocess.Popen(command, stdout=subprocess.PIPE)
+        proc = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
         out, err = proc.communicate()
     except Exception as e:
         command_str = " ".join(command)
