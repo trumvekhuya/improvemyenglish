@@ -294,7 +294,7 @@ def main(path_to_book):
     book_name_without_ex = os.path.splitext(book_name)[0]
     result_dir_name = "{}".format(book_name_without_ex)
     result_dir_path = os.path.join(os.path.dirname(path_to_book), result_dir_name)
-    new_book_path = os.path.join(result_dir_path, book_name)
+    new_book_path = os.path.join(result_dir_path, book_name.replace('html', 'mobi'))
 
     if os.path.exists(result_dir_path):
         shutil.rmtree(result_dir_path)
