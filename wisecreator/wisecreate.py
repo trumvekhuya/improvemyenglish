@@ -288,8 +288,7 @@ def main(path_to_book):
 
     book_name = os.path.basename(path_to_book)
     book_name_without_ex = os.path.splitext(book_name)[0]
-    result_dir_name = "{}-WordWised".format(book_name_without_ex)
-    result_dir_path = os.path.join(os.path.dirname(path_to_book), result_dir_name)
+    result_dir_path = os.path.join(os.path.dirname(path_to_book), book_name_without_ex)
     new_book_path = os.path.join(result_dir_path, book_name.replace('html', 'mobi'))
 
     if os.path.exists(result_dir_path):
@@ -298,13 +297,13 @@ def main(path_to_book):
     if not os.path.exists(result_dir_path):
         os.makedirs(result_dir_path)
 
-    print("[.] Converting file to mobi to generate ASIN")
+    print("[.] Converting html file to mobi to generate ASIN")
     # Convert mobi to mobi by calibre and get ASIN that calibre assign to converted book
     try:
         cmd_str = f'ebook-convert {path_to_book} {new_book_path}'
         subprocess.check_output(cmd_str, shell=True)
     except Exception as e:
-        print("  [-] Failed to convert file to mobi:")
+        print("  [-] Failed to convert html file to mobi:")
         print("    |", e)
         return
     path_to_book = new_book_path
