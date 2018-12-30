@@ -1,26 +1,26 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import os
+import re
+import shutil
 import sqlite3
 import subprocess
 import sys
-import shutil
-import os
-import shutil
-import re
-import nltk
-import platform
-import cursor
-import time
 from html.parser import HTMLParser
 
+import cursor
+import nltk
+
 DEBUG = False
+
 
 class WiseException(Exception):
     def __init__(self, message, desc):
         super().__init__(message)
 
         self.desc = desc
+
 
 def get_resource_path(relative_path):
     try:
@@ -29,6 +29,7 @@ def get_resource_path(relative_path):
         base_path = os.path.dirname(os.path.realpath(__file__))
 
     return os.path.join(base_path, relative_path)
+
 
 # Got it from https://gist.github.com/aubricus/f91fb55dc6ba5557fbab06119420dd6a
 # Print iterations progress
@@ -61,6 +62,7 @@ def print_progress(iteration, total, prefix='', suffix='', decimals=1, bar_lengt
         print("")
         cursor.show()
 
+
 def get_wordnet_pos(treebank_tag):
     if treebank_tag.startswith('J'):
         return nltk.corpus.wordnet.ADJ
@@ -72,10 +74,6 @@ def get_wordnet_pos(treebank_tag):
         return nltk.corpus.wordnet.ADV
     else:
         return nltk.corpus.wordnet.NOUN
-
-
-def usage():
-    print("./main.py input_book")
 
 
 class WordFilter:
@@ -90,17 +88,14 @@ class WordFilter:
                 self.do_not_take.append(word)
 
     def is_take_word(self, word):
-        lword = word.lower()
-
         if word in self.do_not_take:
             return False
-
-        #Do not take words with contractions
-        #like "tree's", "he'll", "we've", e.t.c
+        # Do not take words with contractions
+        # like "tree's", "he'll", "we've", e.t.c
         if word.find('\'') != -1:
             return False
-
         return True
+
 
 class LanguageLayerDB():
     def __init__(self, path_to_dir, book_asin):
@@ -123,15 +118,15 @@ class LanguageLayerDB():
 
         metadata = {
             'acr': 'CR!W0W520HKPX6X12GRQ87AQC3XW3BV',
-            'targetLanguages' : 'en',
-            'sidecarRevision' : '45',
-            'ftuxMarketplaces' : 'ATVPDKIKX0DER,A1F83G8C2ARO7P,A39IBJ37TRP1C6,A2EUQ1WTGCTBG2',
-            'bookRevision' : 'b5320927',
-            'sourceLanguage' : 'en',
-            'enDictionaryVersion' : en_dictionary_version,
-            'enDictionaryRevision' : en_dictionary_revision,
-            'enDictionaryId' : en_dictionary_id,
-            'sidecarFormat' : '1.0',
+            'targetLanguages': 'en',
+            'sidecarRevision': '45',
+            'ftuxMarketplaces': 'ATVPDKIKX0DER,A1F83G8C2ARO7P,A39IBJ37TRP1C6,A2EUQ1WTGCTBG2',
+            'bookRevision': 'b5320927',
+            'sourceLanguage': 'en',
+            'enDictionaryVersion': en_dictionary_version,
+            'enDictionaryRevision': en_dictionary_revision,
+            'enDictionaryId': en_dictionary_id,
+            'sidecarFormat': '1.0',
         }
 
         try:
@@ -194,22 +189,16 @@ class RawmlRarser(HTMLParser):
             word = paragraph_text[match.start():match.end()]
             if self.wf.is_take_word(word):
                 word_offset = self.getpos()[1] + match.start()
-                word_byte_offset = self.last_token_bt_offset + len(self.bt[self.last_token_offset:word_offset].encode('utf-8'))
+                word_byte_offset = self.last_token_bt_offset + len(
+                    self.bt[self.last_token_offset:word_offset].encode('utf-8'))
                 self.last_token_offset = word_offset
                 self.last_token_bt_offset = word_byte_offset
                 self.result.append((word_byte_offset, word))
 
+
 def get_path_to_mobitool():
-    path_to_third_party = get_resource_path("third_party")
+    return os.path.join(get_resource_path("third_party"), "mobitool-linux-x86_64")
 
-    if platform.system() == "Linux":
-        path_to_mobitool = os.path.join(path_to_third_party, "mobitool-linux-x86_64")
-    if platform.system() == "Windows":
-        path_to_mobitool = os.path.join(path_to_third_party, "mobitool-win32.exe")
-    if platform.system() == "Darwin":
-        path_to_mobitool = os.path.join(path_to_third_party, "mobitool-osx-x86_64")
-
-    return path_to_mobitool
 
 def get_book_asin(path_to_book):
     path_to_mobitool = get_path_to_mobitool()
@@ -237,13 +226,14 @@ def get_book_asin(path_to_book):
         message = ["Failed to decode mobitool output"]
         raise WiseException("", message)
 
+
 def get_rawml_content(path_to_book):
     path_to_mobitool = get_path_to_mobitool()
 
     command = f'{path_to_mobitool} -d {path_to_book}'
     try:
         proc = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
-        out, err = proc.communicate()
+        proc.communicate()
     except Exception as e:
         command_str = " ".join(command)
         description = ["Failed to run command", command_str, e]
@@ -262,6 +252,7 @@ def get_rawml_content(path_to_book):
         message = ["Failed to open {} - {}".format(path_to_rawml, e)]
         raise WiseException("", message)
 
+
 def check_dependencies():
     try:
         subprocess.check_output('ebook-convert --version', shell=True)
@@ -269,18 +260,16 @@ def check_dependencies():
         raise ValueError("Calibre not found")
 
     path_to_nltk = get_resource_path("nltk_data")
-    if os.path.exists(path_to_nltk) == False:
+    if not os.path.exists(path_to_nltk):
         raise ValueError(path_to_nltk + " not found")
 
     path_to_mobitool = get_path_to_mobitool()
-    if os.path.exists(path_to_mobitool) == False:
+    if not os.path.exists(path_to_mobitool):
         print("In this not found???")
         raise ValueError(path_to_mobitool + " not found")
 
 
 def main(path_to_book):
-    # if len(sys.argv) < 2:
-    #     return usage()
     print("[.] Checking dependenices")
     try:
         check_dependencies()
@@ -291,12 +280,11 @@ def main(path_to_book):
 
     path_to_script = os.path.dirname(os.path.realpath(__file__))
     path_to_nltk = os.path.join(path_to_script, "nltk_data")
-    nltk.data.path = [ path_to_nltk ] + nltk.data.path
+    nltk.data.path = [path_to_nltk] + nltk.data.path
 
-    # path_to_book = os.path.abspath(sys.argv[1])
-    # if os.path.exists(sys.argv[1]) == False:
-    #     print("[-] Wrong path to book: {}".format(path_to_book))
-    #     sys.exit()
+    if not os.path.exists(path_to_book):
+        print("[-] Wrong path to book: {}".format(path_to_book))
+        sys.exit()
 
     book_name = os.path.basename(path_to_book)
     book_name_without_ex = os.path.splitext(book_name)[0]
@@ -310,13 +298,13 @@ def main(path_to_book):
     if not os.path.exists(result_dir_path):
         os.makedirs(result_dir_path)
 
-    print("[.] Converting mobi 2 mobi to generate ASIN")
-    #Convert mobi to mobi by calibre and get ASIN that calibre assign to converted book
+    print("[.] Converting file to mobi to generate ASIN")
+    # Convert mobi to mobi by calibre and get ASIN that calibre assign to converted book
     try:
-        cmd_str = "{} \"{}\" \"{}\"".format('ebook-convert', path_to_book, new_book_path)
-        out = subprocess.check_output(cmd_str, shell=True)
+        cmd_str = f'ebook-convert {path_to_book} {new_book_path}'
+        subprocess.check_output(cmd_str, shell=True)
     except Exception as e:
-        print("  [-] Failed to convert mobi 2 mobi:")
+        print("  [-] Failed to convert file to mobi:")
         print("    |", e)
         return
     path_to_book = new_book_path
@@ -337,7 +325,6 @@ def main(path_to_book):
         print("  [-] Can't get rawml content:")
         print("    |", e)
         return
-
 
     sdr_dir_name = "{}.sdr".format(book_name_without_ex)
     sdr_dir_path = os.path.join(result_dir_path, sdr_dir_name)
@@ -371,7 +358,7 @@ def main(path_to_book):
     prfx = "[.] Processing words: "
     print_progress(0, count, prefix=prfx, suffix='')
     LangLayerDb.start_transaction()
-    if DEBUG == True:
+    if DEBUG:
         f = open('log.txt', 'a')
     for i, gloss in enumerate(words):
         word_offset = gloss[0]
@@ -382,15 +369,15 @@ def main(path_to_book):
         word = lemmatizer.lemmatize(word, pos=pos_tag_wordnet)
         if word in lookup:
             sense_id = lookup[word]
-            if DEBUG == True:
-                f.write("{} - {} - {}\n".format(word_offset, word, sense_id))
+            if DEBUG:
+                f.write(f"{word_offset} - {word} - {sense_id}\n")
             LangLayerDb.add_gloss(word_offset, sense_id)
-        print_progress(i+1, count, prefix=prfx, suffix='')
+        print_progress(i + 1, count, prefix=prfx, suffix='')
 
-    if DEBUG == True:
+    if DEBUG:
         f.close()
     LangLayerDb.end_transaction()
     LangLayerDb.close_db()
 
     print("[.] Success!")
-    print("Now copy this folder: \"{}\" to your Kindle".format(result_dir_path))
+    print(f"Now copy this folder: {result_dir_path} to your Kindle")

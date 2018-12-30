@@ -84,18 +84,13 @@ def run():
     if not os.path.exists(directory):
         os.makedirs(directory)
     commitMessage = f'{title} by {author}'
-    text_file_name = os.path.join(directory, f'{date}-{title.replace(" ", "_")}-{author.replace(" ", "_")}.html')
+    html_file_name = os.path.join(directory, f'{date}-{title.replace(" ", "_")}-{author.replace(" ", "_")}.html')
 
     print('Building output...', end='')
-    write_to_file(text_file_name, output_html, 'w')
-    # print("Start converting from html file to mobi")
-    # os.system(f'ebook-convert {text_file_name} {text_file_name.replace(".html", "")}.mobi')
-    # print("DONE converting from html file to mobi")
-    print("Start creating wordwise for mobi file")
-    wisecreator.wisecreate.main(f'{text_file_name}')
-    # os.remove(text_file_name)
-    # os.remove(f'{text_file_name.replace(".html", "")}.mobi')
-    # write_audio_file(get_audio_links(get_book_id(cta), get_chapter_ids(cta)), directory, title)
+    write_to_file(html_file_name, output_html, 'w')
+    wisecreator.wisecreate.main(f'{html_file_name}')
+    os.remove(html_file_name)
+    write_audio_file(get_audio_links(get_book_id(cta), get_chapter_ids(cta)), directory, title)
     return commitMessage
 
 
