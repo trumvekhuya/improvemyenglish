@@ -202,7 +202,7 @@ def get_path_to_mobitool():
     path_to_third_party = get_resource_path("third_party")
 
     if platform.system() == "Linux":
-        path_to_mobitool = os.path.join(path_to_third_party, "mobitool-linux-i386")
+        path_to_mobitool = os.path.join(path_to_third_party, "mobitool-linux-x86_64")
     if platform.system() == "Windows":
         path_to_mobitool = os.path.join(path_to_third_party, "mobitool-win32.exe")
 
