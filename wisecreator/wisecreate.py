@@ -227,6 +227,7 @@ def get_book_asin(path_to_book):
             book_asin = match.group(1)
             return book_asin
         else:
+            print("Return None???")
             return None
     except Exception as e:
         message = ["Failed to decode mobitool output"]
