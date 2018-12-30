@@ -259,6 +259,7 @@ def get_rawml_content(path_to_book):
 
 def check_dependencies():
     try:
+        print("checking ebook-convert\n")
         subprocess.check_output('ebook-convert --version', shell=True)
     except FileNotFoundError as e:
         raise ValueError("Calibre not found")
@@ -269,7 +270,6 @@ def check_dependencies():
 
     path_to_mobitool = get_path_to_mobitool()
     if os.path.exists(path_to_mobitool) == False:
-        print("Exception is in here????")
         raise ValueError(path_to_mobitool + " not found")
 
 
