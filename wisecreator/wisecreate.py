@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import os
-import platform
-import re
-import shutil
 import sqlite3
 import subprocess
 import sys
-from html.parser import HTMLParser
-
-import cursor
+import shutil
+import os
+import shutil
+import re
 import nltk
+import platform
+import cursor
+import time
+from html.parser import HTMLParser
 
 DEBUG = False
 
@@ -154,7 +155,7 @@ class LanguageLayerDB():
 
     def start_transaction(self):
         self.cursor.execute("BEGIN TRANSACTION")
-    
+
     def end_transaction(self):
         self.conn.commit()
 
@@ -202,18 +203,20 @@ def get_path_to_mobitool():
     path_to_third_party = get_resource_path("third_party")
 
     if platform.system() == "Linux":
-        path_to_mobitool = os.path.join(path_to_third_party, "mobitool-linux-x86_64")
+        path_to_mobitool = os.path.join(path_to_third_party, "mobitool-linux-i386")
     if platform.system() == "Windows":
         path_to_mobitool = os.path.join(path_to_third_party, "mobitool-win32.exe")
+    if platform.system() == "Darwin":
+        path_to_mobitool = os.path.join(path_to_third_party, "mobitool-osx-x86_64")
 
     return path_to_mobitool
 
 def get_book_asin(path_to_book):
     path_to_mobitool = get_path_to_mobitool()
-    print(path_to_mobitool)
+
     command = [path_to_mobitool, path_to_book]
     try:
-        proc= subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
+        proc = subprocess.Popen(command, stdout=subprocess.PIPE)
         out, err = proc.communicate()
     except Exception as e:
         command_str = " ".join(command)
@@ -227,7 +230,6 @@ def get_book_asin(path_to_book):
             book_asin = match.group(1)
             return book_asin
         else:
-            print("Return None???")
             return None
     except Exception as e:
         message = ["Failed to decode mobitool output"]
@@ -238,7 +240,7 @@ def get_rawml_content(path_to_book):
 
     command = [path_to_mobitool, '-d', path_to_book]
     try:
-        proc = subprocess.Popen(command,shell=True, stdout=subprocess.PIPE)
+        proc = subprocess.Popen(command, stdout=subprocess.PIPE)
         out, err = proc.communicate()
     except Exception as e:
         command_str = " ".join(command)
@@ -260,7 +262,6 @@ def get_rawml_content(path_to_book):
 
 def check_dependencies():
     try:
-        print("checking ebook-convert\n")
         subprocess.check_output('ebook-convert --version', shell=True)
     except FileNotFoundError as e:
         raise ValueError("Calibre not found")
@@ -275,6 +276,8 @@ def check_dependencies():
 
 
 def main(path_to_book):
+    # if len(sys.argv) < 2:
+    #     return usage()
     print("[.] Checking dependenices")
     try:
         check_dependencies()
@@ -286,16 +289,17 @@ def main(path_to_book):
     path_to_script = os.path.dirname(os.path.realpath(__file__))
     path_to_nltk = os.path.join(path_to_script, "nltk_data")
     nltk.data.path = [ path_to_nltk ] + nltk.data.path
-    
+
+    # path_to_book = os.path.abspath(sys.argv[1])
     # if os.path.exists(sys.argv[1]) == False:
     #     print("[-] Wrong path to book: {}".format(path_to_book))
     #     sys.exit()
 
     book_name = os.path.basename(path_to_book)
     book_name_without_ex = os.path.splitext(book_name)[0]
-    result_dir_name = "{}".format(book_name_without_ex)
+    result_dir_name = "{}-WordWised".format(book_name_without_ex)
     result_dir_path = os.path.join(os.path.dirname(path_to_book), result_dir_name)
-    new_book_path = os.path.join(result_dir_path, book_name.replace('html', 'mobi'))
+    new_book_path = os.path.join(result_dir_path, book_name)
 
     if os.path.exists(result_dir_path):
         shutil.rmtree(result_dir_path)
