@@ -274,6 +274,7 @@ def check_dependencies():
 
     path_to_mobitool = get_path_to_mobitool()
     if os.path.exists(path_to_mobitool) == False:
+        print("In this not found???")
         raise ValueError(path_to_mobitool + " not found")
 
 
