@@ -88,7 +88,10 @@ def run():
 
     print('Building output...', end='')
     write_to_file(text_file_name, output_html, 'w')
+    print("Start converting from html file to mobi")
     os.system(f'ebook-convert {text_file_name} {text_file_name.replace(".html", "")}.mobi')
+    print("DONE converting from html file to mobi")
+    print("Start creating wordwise for mobi file")
     wisecreator.wisecreate.main(f'{text_file_name.replace(".html", "")}.mobi')
     # os.remove(text_file_name)
     # os.remove(f'{text_file_name.replace(".html", "")}.mobi')
