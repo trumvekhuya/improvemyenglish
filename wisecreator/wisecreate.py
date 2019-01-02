@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import platform
 import re
 import shutil
 import sqlite3
@@ -197,7 +198,10 @@ class RawmlRarser(HTMLParser):
 
 
 def get_path_to_mobitool():
-    return os.path.join(get_resource_path("third_party"), "mobitool-linux-x86_64")
+    path_to_third_party = get_resource_path("third_party")
+    if platform.system() == "Linux":
+        return os.path.join(path_to_third_party, "mobitool-linux-x86_64")
+    return os.path.join(path_to_third_party, "mobitool-win32.exe")
 
 
 def get_book_asin(path_to_book):
@@ -269,7 +273,7 @@ def check_dependencies():
         raise ValueError(path_to_mobitool + " not found")
 
 
-def main(path_to_book):
+def main(path_to_book, cover_image):
     print("[.] Checking dependenices")
     try:
         check_dependencies()
@@ -300,7 +304,7 @@ def main(path_to_book):
     print("[.] Converting html file to mobi to generate ASIN")
     # Convert mobi to mobi by calibre and get ASIN that calibre assign to converted book
     try:
-        cmd_str = f'ebook-convert {path_to_book} {new_book_path}'
+        cmd_str = f'ebook-convert {path_to_book} {new_book_path} --cover {cover_image} --share-not-sync --level1-toc //h:h1'
         subprocess.check_output(cmd_str, shell=True)
     except Exception as e:
         print("  [-] Failed to convert html file to mobi:")
