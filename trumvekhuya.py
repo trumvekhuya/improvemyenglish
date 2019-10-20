@@ -1,5 +1,6 @@
 import json
 import os
+import ssl
 from datetime import datetime
 
 import pygit2
@@ -20,7 +21,7 @@ email = os.environ['EMAIL']
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/11.1 Safari/605.1.15'}
-http = urllib3.PoolManager(10, headers=headers)
+http = urllib3.PoolManager(10, headers=headers, cert_reqs=ssl.CERT_NONE)
 urllib3.disable_warnings()
 
 
@@ -31,12 +32,12 @@ def get_element_from_request(url, element, class_):
 
 
 def get_meta_data():
-    container = get_element_from_request(domain + '/nc/daily', 'div', 'dailyV2__free-book')
+    container = get_element_from_request(domain + '/nc/daily', 'div', 'daily-book__container')
 
-    title = container.find('div', 'dailyV2__free-book__title').string.strip()
-    author = container.find('div', 'dailyV2__free-book__author').string.strip()
-    description = container.find('div', 'dailyV2__free-book__description').string.strip()
-    cta = container.find('div', 'dailyV2__free-book__cta').a['href']
+    title = container.find('h3', 'daily-book__headline').string.strip()
+    author = container.find('div', 'daily-book__author').string.strip()
+    description = container.find('div', 'book-tabs__content-inner').text.strip()
+    cta = container.find('a', 'cta cta--play daily-book__cta')['href']
     img_url = container.find('img')['src']
 
     return title, author, description, cta, img_url
@@ -64,14 +65,15 @@ def get_book_id(cta):
 def get_audio_links(book_id, chapterids):
     chapter_no_2_audio_link = {}
     for chapterNo, chapterid in chapterids.items():
-        response = requests.get(f'{domain}/api/books/{book_id}/chapters/{chapterid}/audio')
+        response = requests.get(f'{domain}/api/books/{book_id}/chapters/{chapterid}/audio',
+                                headers={'x-requested-with': 'XMLHttpRequest'})
         chapter_no_2_audio_link[chapterNo] = json.loads(response.content).get('url')
     return chapter_no_2_audio_link
 
 
 def write_audio_file(audio_links, directory, title):
     for chapterNo, audio_link in audio_links.items():
-        write_to_file(os.path.join(directory, f'{title}-{chapterNo}.mp4'),
+        write_to_file(os.path.join(directory, f'{title}-{chapterNo}.m4a'),
                       requests.get(audio_link).content, 'wb')
 
 
@@ -80,6 +82,7 @@ def run():
     title, author, description, cta, img_url = get_meta_data()
     html_article = get_article(cta)
     date = datetime.now().strftime('%Y%m%d')
+    author = re.sub('[^A-Za-z0-9]+', '_', author.replace('by ', ''))
     legal_title = re.sub('[^A-Za-z0-9]+', '_', title)
     directory = 'clone/blinks/' + f'{date[:4]}' + '/' + legal_title
     if not os.path.exists(directory):
@@ -89,7 +92,7 @@ def run():
     output_html = f'<h1>{title}</h1><h2>{author}</h2><p>{description}</p>{html_article}'
 
     commitMessage = f'{title} by {author}'
-    html_file_name = os.path.join(directory, f'{date}-{legal_title}-{author.replace(" ", "_")}.html')
+    html_file_name = os.path.join(directory, f'{date}-{legal_title}-{author}.html')
 
     print('Building output...', end='')
     write_to_file(html_file_name, output_html, 'w')
